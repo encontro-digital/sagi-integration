@@ -1,13 +1,19 @@
-
-# 📘 Documentação de Integração - Webhooks Encontro Digital
+# 📘 Integração Webhook - Encontro Digital
 
 ## 📡 Visão Geral
 
-A plataforma **Encontro Digital** realiza **envios automáticos de dados para endpoints fornecidos pelo cliente**. Os envios ocorrem em horários programados, permitindo ao cliente receber e processar os dados de forma automatizada.
+Este repositório contém a **documentação oficial** da integração via **Webhooks** da plataforma **Encontro Digital**.
+
+Através desta integração, o cliente poderá receber, de forma automática, os dados de:
+
+- ✅ Cadastros de participantes
+- ✅ Vendas realizadas
+- ✅ Ingressos emitidos
+- ✅ Conciliação Financeira semanal
 
 ---
 
-## 📅 Frequência de Envios
+## 📅 Frequência de Envio
 
 | Tipo de Dados               | Frequência                      | Horário (GMT-3) |
 |---------------------------- |-------------------------------- |---------------- |
@@ -16,30 +22,45 @@ A plataforma **Encontro Digital** realiza **envios automáticos de dados para en
 
 ---
 
-## 📌 Considerações Gerais
+## 📂 Estrutura do Repositório
 
-- **Formato dos valores monetários:** Sempre enviados como **inteiros (integer)**, representando o valor **em centavos**.
+| Documento                        | Conteúdo                         |
+|-------------------------------- |-------------------------------- |
+| [`documentacao_geral.md`](documentacao_geral.md) | Visão geral da integração |
+| [`cadastros.md`](cadastros.md) | Detalhamento técnico do endpoint de Cadastros |
+| [`vendas.md`](vendas.md) | Detalhamento técnico do endpoint de Vendas |
+| [`ingressos.md`](ingressos.md) | Detalhamento técnico do endpoint de Ingressos |
+| [`conciliacao.md`](conciliacao.md) | Detalhamento técnico do endpoint de Conciliação Financeira |
 
-- **Banco de dados:** A Encontro Digital utiliza um banco **NoSQL (MongoDB)**.  
-  Portanto, o campo **`_id` não é numérico**. Caso o banco de destino do cliente seja SQL, recomenda-se **reservar um campo específico para armazenar o `_id` como string**.
+---
 
-- **Envio baseado em atualização (Cadastros, Vendas e Ingressos):**
-  - Os dados desses endpoints são enviados com base no campo **`updatedAt`**.
-  - O cliente deve validar:
-    - **Se o `_id` já existe no banco de destino → realizar um update.**
-    - **Se o `_id` não existir → realizar uma inserção.**
+## 🛠️ Formato das Requisições
 
-- **Enums padronizados:**
+- **Método HTTP:** `POST`
+- **Content-Type:** `application/json`
+- **Formato de valores monetários:** Sempre **inteiros**, representando **centavos**.
 
-| Campo               | Valores possíveis                        |
-|-------------------- |---------------------------------------- |
-| `payment_method_id` | `"Cartão de Crédito"`, `"Boleto"`, `"Pix"`, `"Cortesia"`, `"Gratuito"` |
-| `payment_status_id` | `"Aguardando"`, `"Pago"`, `"Cancelado"`, `"Estornado"` |
-| `operation`         | `"Crédito"`, `"Saque"`, `"Estorno"` |
+---
 
-- **Content-Type de todas as requisições:** `application/json`
+## 🗃️ Observações sobre o Banco de Dados
 
-- **Resposta esperada em todos os endpoints:**
+A Encontro Digital utiliza um banco de dados **NoSQL (MongoDB)**.
+
+- O campo `_id` é uma **string única do MongoDB** e **não é numérico**.
+- Caso o banco de destino do cliente seja SQL, recomendamos **reservar um campo específico para armazenar o `_id` como texto**.
+
+---
+
+## 🕒 Controle de Atualizações
+
+Para os endpoints de **Cadastros**, **Vendas** e **Ingressos**:
+
+- Os dados são enviados com base no campo **`updatedAt`**.
+- O cliente deve implementar lógica para verificar se o registro recebido já existe (**atualização**) ou se é um novo registro (**inserção**).
+
+---
+
+## ✅ Resposta Esperada dos Endpoints
 
 ```json
 {
@@ -47,20 +68,11 @@ A plataforma **Encontro Digital** realiza **envios automáticos de dados para en
 }
 ```
 
-O endpoint do cliente deve sempre retornar **HTTP 200 OK**.
+O endpoint do cliente deve sempre retornar **HTTP 200 OK** para confirmar o recebimento.
 
 ---
 
-## 📂 Documentação por Endpoint
+## 📞 Suporte
 
-- [📄 Cadastros](cadastros.md)
-- [📄 Vendas](vendas.md)
-- [📄 Ingressos](ingressos.md)
-- [📄 Conciliação Financeira](conciliacao.md)
-
----
-
-## ✅ Considerações Finais
-
-- Recomendamos que o cliente implemente validações para garantir a consistência dos dados recebidos.
-- Mudanças futuras nos campos ou estrutura serão comunicadas previamente pela equipe técnica do **Encontro Digital**.
+Dúvidas ou necessidade de suporte técnico?  
+Entre em contato com a equipe de TI da **Encontro Digital**.
